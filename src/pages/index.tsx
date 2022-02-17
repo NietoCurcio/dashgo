@@ -38,8 +38,18 @@ const SignIn: NextPage = () => {
         onSubmit={handleSign}
       >
         <Stack spacing="4">
-          <Input type="email" {...register('email')} label="E-mail" />
-          <Input type="password" {...register('password')} label="Senha" />
+          <Input
+            type="email"
+            {...register('email', { required: 'E-mail obrigatório' })}
+            label="E-mail"
+            error={errors.email}
+          />
+          <Input
+            type="password"
+            {...register('password', { required: 'Senha obrigatória' })}
+            label="Senha"
+            error={errors.password}
+          />
         </Stack>
 
         <Button
