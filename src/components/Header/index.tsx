@@ -1,14 +1,5 @@
-import {
-  Flex,
-  Icon,
-  IconButton,
-  Spinner,
-  useBreakpointValue,
-  useMediaQuery,
-} from '@chakra-ui/react'
-import { useState, useEffect } from 'react'
+import { Flex, Icon, IconButton } from '@chakra-ui/react'
 import { RiMenuLine } from 'react-icons/ri'
-import { useMediaQueryContext } from '../../contexts/MediaQueryContext'
 import { useSidebarDrawer } from '../../contexts/SidebarDrawerContext'
 import { Logo } from './Logo'
 import { Notifications } from './Notifications'

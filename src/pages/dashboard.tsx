@@ -1,8 +1,9 @@
-import { Box, Flex, SimpleGrid, Text, theme } from '@chakra-ui/react'
+import { Box, Flex, SimpleGrid, Spinner, Text, theme } from '@chakra-ui/react'
 import dynamic from 'next/dynamic'
 import { Header } from '../components/Header'
 import { Sidebar } from '../components/Sidebar'
 import { ApexOptions } from 'apexcharts'
+import { useMediaQueryContext } from '../contexts/MediaQueryContext'
 
 const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -67,13 +68,28 @@ const series = [
   },
 ]
 
+interface ReturnUseMediaQueryContext {
+  isMobile: boolean
+  isLoading: boolean
+}
+
 export default function Dashboard() {
+  const { isMobile, isLoading } =
+    useMediaQueryContext() as ReturnUseMediaQueryContext
+
+  if (isLoading)
+    return (
+      <Flex alignItems="center" justifyContent="center" w="100vw" h="100vh">
+        <Spinner color="pink.500" size="xl" />
+      </Flex>
+    )
+
   return (
     <Flex direction="column" h="100vh">
-      <Header />
+      <Header isMobile={isMobile} />
 
       <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
-        <Sidebar />
+        <Sidebar isMobile={isMobile} />
 
         <SimpleGrid
           flex="1"

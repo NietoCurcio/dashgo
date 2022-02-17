@@ -6,12 +6,7 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
-  Text,
-  useBreakpointValue,
-  useMediaQuery,
-  Spinner,
 } from '@chakra-ui/react'
-import { useMediaQueryContext } from '../../contexts/MediaQueryContext'
 import { useSidebarDrawer } from '../../contexts/SidebarDrawerContext'
 import { SidebarNav } from './SidebarNav'
 interface SidebarProps {

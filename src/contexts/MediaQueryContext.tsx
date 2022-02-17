@@ -1,21 +1,19 @@
-import {
-  useDisclosure,
-  UseDisclosureReturn,
-  useMediaQuery,
-} from '@chakra-ui/react'
-import { useRouter } from 'next/router'
+import { useMediaQuery } from '@chakra-ui/react'
 import {
   ReactNode,
   createContext,
   useContext,
   useEffect,
-  ProviderProps,
   useState,
 } from 'react'
 
 const MediaQueryContext = createContext({})
 
-export function MediaQueryProvider({ children }: any) {
+interface MediaQueryProviderProps {
+  children: ReactNode
+}
+
+export function MediaQueryProvider({ children }: MediaQueryProviderProps) {
   const [isSmallerThan768] = useMediaQuery('(max-width: 768px)')
 
   const [isMobile, setIsMobile] = useState(true)

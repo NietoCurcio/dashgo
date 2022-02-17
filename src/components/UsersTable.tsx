@@ -5,7 +5,6 @@ import {
   Flex,
   Heading,
   Icon,
-  Spinner,
   Table,
   Tbody,
   Td,
@@ -16,7 +15,6 @@ import {
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import { RiAddLine, RiPencilLine } from 'react-icons/ri'
-import { useMediaQueryContext } from '../contexts/MediaQueryContext'
 import { Pagination } from './Pagination'
 
 interface UsersTableProps {
@@ -25,9 +23,16 @@ interface UsersTableProps {
 
 export function UsersTable({ isMobile }: UsersTableProps) {
   return (
-    <Box flex="1" borderRadius={8} bg="gray.800" p="8">
+    <Box
+      flex="1"
+      borderRadius={8}
+      bg="gray.800"
+      p={['6', '8']}
+      mx={['6', '8']}
+      overflow="hidden"
+    >
       <Flex mb="8" justify="space-between" align="center">
-        <Heading size="lg" fontWeight="normal">
+        <Heading fontSize={['md', 'lg']} fontWeight="normal">
           Usuários
         </Heading>
         <Link href="/users/create" passHref>
@@ -51,7 +56,7 @@ export function UsersTable({ isMobile }: UsersTableProps) {
             </Th>
             <Th>Usuário</Th>
             {!isMobile && <Th>Data de cadastro</Th>}
-            <Th w="0"></Th>
+            {!isMobile && <Th w="0"></Th>}
           </Tr>
         </Thead>
         <Tbody>
@@ -68,24 +73,26 @@ export function UsersTable({ isMobile }: UsersTableProps) {
               </Box>
             </Td>
             {!isMobile && <Td>16 de Fevereiro, 2022</Td>}
-            <Td>
-              <Button
-                as="a"
-                size="sm"
-                fontSize="sm"
-                colorScheme="purple"
-                variant="outline"
-                _hover={{
-                  bg: 'gray.900',
-                }}
-                _active={{
-                  bg: 'gray.800',
-                }}
-              >
-                <Icon as={RiPencilLine} fontSize="16" />{' '}
-                {!isMobile && <Text ml="2">Editar</Text>}
-              </Button>
-            </Td>
+            {!isMobile && (
+              <Td>
+                <Button
+                  as="a"
+                  size="sm"
+                  fontSize="sm"
+                  colorScheme="purple"
+                  variant="outline"
+                  _hover={{
+                    bg: 'gray.900',
+                  }}
+                  _active={{
+                    bg: 'gray.800',
+                  }}
+                >
+                  <Icon as={RiPencilLine} fontSize="16" />{' '}
+                  <Text ml="2">Editar</Text>
+                </Button>
+              </Td>
+            )}
           </Tr>
         </Tbody>
       </Table>

@@ -1,25 +1,5 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  Flex,
-  Heading,
-  Icon,
-  Spinner,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  useBreakpointValue,
-  useMediaQuery,
-} from '@chakra-ui/react'
-import Link from 'next/link'
-import { RiAddLine, RiPencilLine } from 'react-icons/ri'
+import { Box, Flex, Spinner } from '@chakra-ui/react'
 import { Header } from '../../components/Header'
-import { Pagination } from '../../components/Pagination'
 import { Sidebar } from '../../components/Sidebar'
 import { UsersTable } from '../../components/UsersTable'
 import { useMediaQueryContext } from '../../contexts/MediaQueryContext'
@@ -42,7 +22,7 @@ export default function UserList() {
   return (
     <Box>
       <Header isMobile={isMobile} />
-      <Flex w="100%" my="6" maxWidth={1480} mx="auto" px={['4', '4', '6']}>
+      <Flex my="6">
         <Sidebar isMobile={isMobile} />
 
         <UsersTable isMobile={isMobile} />
