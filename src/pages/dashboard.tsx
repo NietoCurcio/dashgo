@@ -7,7 +7,13 @@ import { ApexOptions } from 'apexcharts'
 const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 })
-// dynamic imports, because Chart expects to be used in browser calling the window API
+
+/* 
+  dynamic imports, because Chart expects to be used in browser calling the window API
+  but with next uses ssr in a node.js environment, passing ssr: false this import will
+  occur in client -side
+*/
+
 // https://nextjs.org/docs/advanced-features/dynamic-import
 
 const options: ApexOptions = {
