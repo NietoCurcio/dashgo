@@ -6,21 +6,85 @@ import {
   Heading,
   HStack,
   SimpleGrid,
+  Spinner,
   VStack,
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import { Input } from '../../components/Form/Input'
 import { Header } from '../../components/Header'
 import { Sidebar } from '../../components/Sidebar'
+import { useMediaQueryContext } from '../../contexts/MediaQueryContext'
+import * as yup from 'yup'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+interface ReturnUseMediaQueryContext {
+  isMobile: boolean
+  isLoading: boolean
+}
+
+type UserCreateFormData = {
+  name: string
+  email: string
+  password: string
+  password_confirmation: string
+}
+
+const userCreateFormSchema = yup.object().shape({
+  name: yup.string().required('Nome obrigatório'),
+  email: yup.string().required('E-mail obrigatório').email('E-mail inválido'),
+  password: yup
+    .string()
+    .required('Senha obrigatória')
+    .min(6, 'No mínimo 6 caracteres'),
+  password_confirmation: yup
+    .string()
+    .required('Confirmação obrigatória')
+    .oneOf(['', yup.ref('password')], 'As senhas precisam ser iguais'),
+})
 
 export default function UserCreate() {
+  const { isMobile, isLoading } =
+    useMediaQueryContext() as ReturnUseMediaQueryContext
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<UserCreateFormData>({
+    resolver: yupResolver(userCreateFormSchema),
+  })
+
+  const handleCreateUser = handleSubmit(async (data) => {
+    const a = await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('Resolved')
+      }, 2000)
+    })
+    console.log(a)
+    console.log(data)
+  })
+
+  if (isLoading)
+    return (
+      <Flex alignItems="center" justifyContent="center" w="100vw" h="100vh">
+        <Spinner color="pink.500" size="xl" />
+      </Flex>
+    )
+
   return (
     <Box>
-      <Header />
-      <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
-        <Sidebar />
+      <Header isMobile={isMobile} />
+      <Flex
+        w="100%"
+        my="6"
+        maxWidth={1480}
+        mx="auto"
+        px="6"
+        onSubmit={handleCreateUser}
+      >
+        <Sidebar isMobile={isMobile} />
 
-        <Box flex="1" borderRadius={8} bg="gray.800" p={['6', '8']}>
+        <Box as="form" flex="1" borderRadius={8} bg="gray.800" p={['6', '8']}>
           <Heading size="lg" fontWeight="normal">
             Criar usuário
           </Heading>
@@ -29,16 +93,31 @@ export default function UserCreate() {
 
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing={['6', '8']} w="100%">
-              <Input name="name" label="Nome Completo" />
-              <Input name="email" type="email" label="E-mail" />
+              <Input
+                {...register('name')}
+                label="Nome Completo"
+                error={errors.name}
+              />
+              <Input
+                {...register('email')}
+                type="email"
+                label="E-mail"
+                error={errors.email}
+              />
             </SimpleGrid>
 
             <SimpleGrid minChildWidth="240px" spacing={['6', '8']} w="100%">
-              <Input name="password" type="password" label="Senha" />
               <Input
-                name="password_confirmation"
+                {...register('password')}
+                type="password"
+                label="Senha"
+                error={errors.password}
+              />
+              <Input
+                {...register('password_confirmation')}
                 type="password"
                 label="Confirmação da senha"
+                error={errors.password_confirmation}
               />
             </SimpleGrid>
           </VStack>
@@ -49,7 +128,9 @@ export default function UserCreate() {
                   Cancelar
                 </Button>
               </Link>
-              <Button colorScheme="pink">Salvar</Button>
+              <Button type="submit" colorScheme="pink" isLoading={isSubmitting}>
+                Salvar
+              </Button>
             </HStack>
           </Flex>
         </Box>
