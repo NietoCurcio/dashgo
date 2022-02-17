@@ -1,13 +1,13 @@
-import { Avatar, Box, Flex, Text } from '@chakra-ui/react'
+import { Avatar, Box, Flex, Text, useMediaQuery } from '@chakra-ui/react'
 
 interface ProfileProps {
-  showProfileData?: boolean
+  showDataProfile: boolean
 }
 
-export function Profile({ showProfileData = true }: ProfileProps) {
+export function Profile({ showDataProfile }: ProfileProps) {
   return (
     <Flex align="center">
-      {showProfileData && (
+      {showDataProfile && (
         <Box mr="4" textAlign="right">
           <Text>Felipe Curcio</Text>
           <Text color="gray.300" fontSize="small">

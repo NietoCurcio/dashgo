@@ -1,20 +1,26 @@
-import { Flex, Icon, IconButton, useBreakpointValue } from '@chakra-ui/react'
+import {
+  Flex,
+  Icon,
+  IconButton,
+  Spinner,
+  useBreakpointValue,
+  useMediaQuery,
+} from '@chakra-ui/react'
+import { useState, useEffect } from 'react'
 import { RiMenuLine } from 'react-icons/ri'
+import { useMediaQueryContext } from '../../contexts/MediaQueryContext'
 import { useSidebarDrawer } from '../../contexts/SidebarDrawerContext'
 import { Logo } from './Logo'
 import { Notifications } from './Notifications'
 import { Profile } from './Profile'
 import { Search } from './Search'
 
-export function Header() {
-  const { onOpen } = useSidebarDrawer()
+interface HeaderProps {
+  isMobile: boolean
+}
 
-  const isWide = useBreakpointValue({
-    base: false,
-    lg: true,
-  })
-  // for lg+ will be true, for smaller screens than lg (62 em) will be false
-  // i.e. base from 0em upwards, lg from 62em upwards
+export function Header({ isMobile }: HeaderProps) {
+  const { onOpen } = useSidebarDrawer()
 
   return (
     <Flex
@@ -27,7 +33,7 @@ export function Header() {
       px="6"
       align="center"
     >
-      {!isWide && (
+      {isMobile && (
         <IconButton
           aria-label="Open navigation"
           icon={<Icon as={RiMenuLine} />}
@@ -42,11 +48,11 @@ export function Header() {
 
       <Logo />
 
-      {isWide && <Search />}
+      {!isMobile && <Search />}
 
       <Flex align="center" ml="auto">
         <Notifications />
-        <Profile showProfileData={isWide} />
+        <Profile showDataProfile={!isMobile} />
       </Flex>
     </Flex>
   )

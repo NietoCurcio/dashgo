@@ -1,10 +1,9 @@
-import { Flex, Icon, Input } from '@chakra-ui/react'
+import { Flex, Icon, Input, useMediaQuery } from '@chakra-ui/react'
 import { RiSearchLine } from 'react-icons/ri'
 
 export function Search() {
   return (
     <Flex
-      as="label"
       flex="1"
       py="4"
       px="8"
