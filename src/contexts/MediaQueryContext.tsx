@@ -31,7 +31,7 @@ export function MediaQueryProvider({ children }: MediaQueryProviderProps) {
     setIsMobile(isSmallerThan768)
     setIsLoading(false)
     // }, 2000)
-  }, [])
+  }, [isSmallerThan768])
 
   return (
     <MediaQueryContext.Provider value={{ isMobile, isLoading }}>

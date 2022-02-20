@@ -5,6 +5,7 @@ import {
   Flex,
   Heading,
   Icon,
+  Spinner,
   Table,
   Tbody,
   Td,
@@ -15,13 +16,22 @@ import {
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import { RiAddLine, RiPencilLine } from 'react-icons/ri'
+import { EditButton } from './EditButton'
 import { Pagination } from './Pagination'
 
 interface UsersTableProps {
   isMobile: boolean
+  isLoading: boolean
+  error: unknown
+  data: any
 }
 
-export function UsersTable({ isMobile }: UsersTableProps) {
+export function UsersTable({
+  isMobile,
+  isLoading,
+  error,
+  data,
+}: UsersTableProps) {
   return (
     <Box
       flex="1"
@@ -48,56 +58,57 @@ export function UsersTable({ isMobile }: UsersTableProps) {
         </Link>
       </Flex>
 
-      <Table colorScheme="whiteAlpha" overflowX="scroll">
-        <Thead>
-          <Tr>
-            <Th px={['4', '4', '6']} color="gray.300" width="8">
-              <Checkbox colorScheme="pink" />
-            </Th>
-            <Th>Usuário</Th>
-            {!isMobile && <Th>Data de cadastro</Th>}
-            {!isMobile && <Th w="0"></Th>}
-          </Tr>
-        </Thead>
-        <Tbody>
-          <Tr>
-            <Td px={['4', '4', '6']}>
-              <Checkbox colorScheme="pink" />
-            </Td>
-            <Td>
-              <Box>
-                <Text fontWeight="bold">Felipe Curcio</Text>
-                <Text fontSize="sm" color="gray.300">
-                  felipe_nieto010@hotmail.com
-                </Text>
-              </Box>
-            </Td>
-            {!isMobile && <Td>16 de Fevereiro, 2022</Td>}
-            {!isMobile && (
-              <Td>
-                <Button
-                  as="a"
-                  size="sm"
-                  fontSize="sm"
-                  colorScheme="purple"
-                  variant="outline"
-                  _hover={{
-                    bg: 'gray.900',
-                  }}
-                  _active={{
-                    bg: 'gray.800',
-                  }}
-                >
-                  <Icon as={RiPencilLine} fontSize="16" />{' '}
-                  <Text ml="2">Editar</Text>
-                </Button>
-              </Td>
-            )}
-          </Tr>
-        </Tbody>
-      </Table>
+      {isLoading ? (
+        <Flex justify="center">
+          <Spinner />
+        </Flex>
+      ) : error ? (
+        <Flex justify="center">
+          <Text>Falha ao obter dados dos usuários</Text>
+        </Flex>
+      ) : (
+        <>
+          <Table colorScheme="whiteAlpha" overflowX="scroll">
+            <Thead>
+              <Tr>
+                <Th px={['4', '4', '6']} color="gray.300" width="8">
+                  <Checkbox colorScheme="pink" />
+                </Th>
+                <Th>Usuário</Th>
+                {!isMobile && <Th>Data de cadastro</Th>}
+                {!isMobile && <Th w="0"></Th>}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {data.map((user: any) => {
+                return (
+                  <Tr key={user.id}>
+                    <Td px={['4', '4', '6']}>
+                      <Checkbox colorScheme="pink" />
+                    </Td>
+                    <Td>
+                      <Box>
+                        <Text fontWeight="bold">{user.name}</Text>
+                        <Text fontSize="sm" color="gray.300">
+                          {user.email}
+                        </Text>
+                      </Box>
+                    </Td>
+                    {!isMobile && <Td>{user.createdAt}</Td>}
+                    {!isMobile && (
+                      <Td>
+                        <EditButton />
+                      </Td>
+                    )}
+                  </Tr>
+                )
+              })}
+            </Tbody>
+          </Table>
 
-      <Pagination />
+          <Pagination />
+        </>
+      )}
     </Box>
   )
 }
