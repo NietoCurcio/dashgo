@@ -1,4 +1,5 @@
 import { Box, Flex, Spinner } from '@chakra-ui/react'
+import { useEffect } from 'react'
 import { Header } from '../../components/Header'
 import { Sidebar } from '../../components/Sidebar'
 import { UsersTable } from '../../components/UsersTable'
@@ -11,6 +12,12 @@ interface ReturnUseMediaQueryContext {
 export default function UserList() {
   const { isMobile, isLoading } =
     useMediaQueryContext() as ReturnUseMediaQueryContext
+
+  useEffect(() => {
+    fetch('http://localhost:3000/api/users')
+      .then((res) => res.json())
+      .then((data) => console.log(data))
+  }, [])
 
   if (isLoading)
     return (
