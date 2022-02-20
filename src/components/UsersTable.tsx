@@ -15,20 +15,22 @@ import {
   Tr,
 } from '@chakra-ui/react'
 import Link from 'next/link'
-import { RiAddLine, RiPencilLine } from 'react-icons/ri'
-import { EditButton } from './EditButton'
+import { RiAddLine } from 'react-icons/ri'
+import { User } from '../services/hooks/useUsers'
 import { Pagination } from './Pagination'
 
 interface UsersTableProps {
   isMobile: boolean
   isLoading: boolean
+  isFetching: boolean
   error: unknown
-  data: any
+  data?: User[]
 }
 
 export function UsersTable({
   isMobile,
   isLoading,
+  isFetching,
   error,
   data,
 }: UsersTableProps) {
@@ -43,7 +45,11 @@ export function UsersTable({
     >
       <Flex mb="8" justify="space-between" align="center">
         <Heading fontSize={['md', 'lg']} fontWeight="normal">
-          Usuários
+          Usuários{' '}
+          {!isLoading && isFetching && (
+            <Spinner size="sm" color="gray.500" ml="4" />
+          )}
+          {/* isLoading is the first loading, isFetching is a revalidating state */}
         </Heading>
         <Link href="/users/create" passHref>
           <Button
@@ -76,11 +82,10 @@ export function UsersTable({
                 </Th>
                 <Th>Usuário</Th>
                 {!isMobile && <Th>Data de cadastro</Th>}
-                {!isMobile && <Th w="0"></Th>}
               </Tr>
             </Thead>
             <Tbody>
-              {data.map((user: any) => {
+              {data?.map((user: User) => {
                 return (
                   <Tr key={user.id}>
                     <Td px={['4', '4', '6']}>
@@ -95,18 +100,17 @@ export function UsersTable({
                       </Box>
                     </Td>
                     {!isMobile && <Td>{user.createdAt}</Td>}
-                    {!isMobile && (
-                      <Td>
-                        <EditButton />
-                      </Td>
-                    )}
                   </Tr>
                 )
               })}
             </Tbody>
           </Table>
 
-          <Pagination />
+          <Pagination
+            totalCountOfRegisters={100}
+            currentPage={4}
+            onPageChange={() => {}}
+          />
         </>
       )}
     </Box>

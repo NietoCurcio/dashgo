@@ -1,10 +1,9 @@
-import { Box, Flex, Spinner, useBreakpointValue } from '@chakra-ui/react'
-import { useEffect } from 'react'
+import { Box, Flex, Spinner } from '@chakra-ui/react'
 import { Header } from '../../components/Header'
 import { Sidebar } from '../../components/Sidebar'
 import { UsersTable } from '../../components/UsersTable'
 import { useMediaQueryContext } from '../../contexts/MediaQueryContext'
-import { useQuery } from 'react-query'
+import { useUsers } from '../../services/hooks/useUsers'
 interface ReturnUseMediaQueryContext {
   isMobile: boolean
   isLoading: boolean
@@ -33,29 +32,7 @@ export default function UserList() {
   it's possible to visualize the state of react-query and its caches 
   through the use of ReactQueryDevtools 
   */
-  const { data, isLoading, error } = useQuery(
-    'users',
-    async () => {
-      const response = await fetch('http://localhost:3000/api/users')
-      const data = await response.json()
-
-      const users = data.users.map((user: any) => {
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          createdAt: new Date(user.createdAt).toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-          }),
-        }
-      })
-
-      return users
-    },
-    { staleTime: 1000 * 5 }
-  )
+  const { data, isLoading, error, isFetching } = useUsers()
 
   const mediaQuery = useMediaQueryContext() as ReturnUseMediaQueryContext
 
@@ -75,6 +52,7 @@ export default function UserList() {
         <UsersTable
           isMobile={mediaQuery.isMobile}
           isLoading={isLoading}
+          isFetching={isFetching}
           error={error}
           data={data}
         />
