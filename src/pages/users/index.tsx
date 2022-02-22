@@ -1,17 +1,21 @@
 import { Box, Flex, Spinner } from '@chakra-ui/react'
+import axios from 'axios'
+import { GetServerSideProps } from 'next'
 import { useState } from 'react'
 import { Header } from '../../components/Header'
 import { Pagination } from '../../components/Pagination'
 import { Sidebar } from '../../components/Sidebar'
 import { UsersTable } from '../../components/UsersTable'
 import { useMediaQueryContext } from '../../contexts/MediaQueryContext'
-import { useUsers } from '../../services/hooks/useUsers'
+import { api } from '../../services/api'
+import { getUsers, useUsers } from '../../services/hooks/useUsers'
 
 interface ReturnUseMediaQueryContext {
   isMobile: boolean
   isLoading: boolean
 }
 
+// export default function UserList({ users, totalCount }) {
 export default function UserList() {
   /*
   useQuery takes as first argument a key to be referenced later
@@ -42,9 +46,15 @@ export default function UserList() {
   another resource of react query that we have is "mutations", used for doing 
   create/update/delete operations on a server, those unlike queries (get data, with useQuery)
   perform server side-effects
+
+  to use SSR with react-query we would have to call the API in the getServerSideProps
+  pass the data to our component, and pass the options initialState in useQuery
   */
   const [page, setPage] = useState(1)
 
+  // const { data, isLoading, error, isFetching } = useUsers(page, {
+  //   initialData: { users },
+  // })
   const { data, isLoading, error, isFetching } = useUsers(page)
 
   const mediaQuery = useMediaQueryContext() as ReturnUseMediaQueryContext
@@ -89,3 +99,16 @@ export default function UserList() {
     </Box>
   )
 }
+
+// export const getServerSideProps: GetServerSideProps = async () => {
+//   const response = await getUsers(1)
+// https://miragejs.com/quickstarts/nextjs/develop-a-page/
+// miragejs only runs in the browser,
+// thus getServerSideProps does not works calling a miragejs api
+
+//   return {
+//     props: {
+//       response,
+//     },
+//   }
+// }

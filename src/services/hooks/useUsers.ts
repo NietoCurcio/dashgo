@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery, UseQueryOptions } from 'react-query'
 import { api } from '../api'
 
 type User = {
@@ -14,35 +14,47 @@ export type GetUsersResponse = {
 }
 
 export async function getUsers(page: number): Promise<GetUsersResponse> {
-  const { data, headers } = await api.get('/users', {
-    params: {
-      page,
-    },
-  })
+  try {
+    const { data, headers } = await api.get('/users', {
+      params: {
+        page,
+      },
+    })
 
-  const totalCount = Number(headers['x-total-count'])
+    const totalCount = Number(headers['x-total-count'])
 
-  const users = data.users.map((user: User) => {
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      createdAt: new Date(user.createdAt).toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-      }),
-    }
-  })
+    const users = data.users.map((user: User) => {
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: new Date(user.createdAt).toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+        }),
+      }
+    })
 
-  return { users, totalCount }
+    return { users, totalCount }
+  } catch (err) {
+    console.log(err.message)
+  }
 }
 
+// export function useUsers(page: number, options: UseQueryOptions) {
 export function useUsers(page: number) {
   // since the list of users are in cache
   // we have to tell to react-query how a list of users (a page of users)
   // differs from each other
   return useQuery(['users', page], () => getUsers(page), {
     staleTime: 1000 * 60 * 10, // 10 minutes
+    // ...options,
+    // initialData: {
+    //   users: [
+    //     { id: '1', name: 'mock', email: 'mock', createdAt: String(new Date()) },
+    //   ],
+    //   totalCount: 1,
+    // },
   })
 }
