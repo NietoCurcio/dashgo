@@ -50,20 +50,26 @@ export function UsersTable({
   const [user, setUser] = useState(null)
 
   async function handlePrefetchUser(userId: string) {
-    await queryClient.prefetchQuery(['user', userId], async () => {
-      const { data } = await api.get(`/users/${userId}`)
+    await queryClient.prefetchQuery(
+      ['user', userId],
+      async () => {
+        const { data } = await api.get(`/users/${userId}`)
 
-      const user = {
-        ...data.user,
-        createdAt: new Date(data.user.createdAt).toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: 'long',
-          year: '2-digit',
-        }),
-      }
+        const user = {
+          ...data.user,
+          createdAt: new Date(data.user.createdAt).toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: 'long',
+            year: '2-digit',
+          }),
+        }
 
-      return user
-    })
+        return user
+      },
+      { staleTime: 1000 * 60 * 10, cacheTime: 1000 * 60 * 5 }
+      // cacheTime has the default of 5min
+      // after 5min of an instance being inactive the cached instance will be deleted
+    )
   }
 
   const { isOpen, onOpen, onClose } = useDisclosure()

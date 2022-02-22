@@ -40,7 +40,23 @@ export function PaginationButton({
             page: number,
           },
         })
-        return data
+
+        const users = data.users.map((user) => {
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            createdAt: new Date(user.createdAt).toLocaleDateString('pt-BR', {
+              day: '2-digit',
+              month: 'long',
+              year: 'numeric',
+            }),
+          }
+        })
+
+        const totalCount = Number(headers['x-total-count'])
+
+        return { users, totalCount }
       },
       { staleTime: 1000 * 60 * 10 } // 10 minutes
     )

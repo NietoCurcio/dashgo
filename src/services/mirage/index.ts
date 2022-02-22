@@ -1,4 +1,11 @@
-import { createServer, Factory, Model, Response } from 'miragejs'
+import {
+  createServer,
+  Factory,
+  Model,
+  Response,
+  ActiveModelSerializer,
+  RestSerializer,
+} from 'miragejs'
 import faker from '@faker-js/faker'
 
 type User = {
@@ -9,6 +16,10 @@ type User = {
 
 export function makeServer() {
   const server = createServer({
+    serializers: {
+      application: RestSerializer,
+    },
+
     models: {
       user: Model.extend<Partial<User>>({}),
       //   <Partial<User>> means that some columns of User can be ommitted when creating a user
@@ -35,7 +46,7 @@ export function makeServer() {
 
     routes() {
       this.namespace = 'api'
-      this.timing = 1750
+      this.timing = 750
       // 750ms setTimeout for an HTTP request
 
       this.get('/users', function (schema, request) {

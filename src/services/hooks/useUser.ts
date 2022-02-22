@@ -25,6 +25,6 @@ export async function getUser(userId: string): Promise<User> {
 
 export function useUser(userId: string) {
   return useQuery(['user', userId], () => getUser(userId), {
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 10, // 10 minutes
   })
 }

@@ -6,6 +6,7 @@ import { Sidebar } from '../../components/Sidebar'
 import { UsersTable } from '../../components/UsersTable'
 import { useMediaQueryContext } from '../../contexts/MediaQueryContext'
 import { useUsers } from '../../services/hooks/useUsers'
+
 interface ReturnUseMediaQueryContext {
   isMobile: boolean
   isLoading: boolean
@@ -33,6 +34,14 @@ export default function UserList() {
 
   it's possible to visualize the state of react-query and its caches 
   through the use of ReactQueryDevtools 
+
+  another great functionality of react-query is doing a "prefetching" of data,
+  in order to cache this data even before visualizing the components that uses that data,
+  and when accessing the component the data has already been fetched
+
+  another resource of react query that we have is "mutations", used for doing 
+  create/update/delete operations on a server, those unlike queries (get data, with useQuery)
+  perform server side-effects
   */
   const [page, setPage] = useState(1)
 
@@ -68,12 +77,13 @@ export default function UserList() {
             error={error}
             data={data}
           />
-
-          <Pagination
-            totalCountOfRegisters={100}
-            currentPage={page}
-            onPageChange={setPage}
-          />
+          {data && data.totalCount && (
+            <Pagination
+              totalCountOfRegisters={data.totalCount}
+              currentPage={page}
+              onPageChange={setPage}
+            />
+          )}
         </Box>
       </Flex>
     </Box>
