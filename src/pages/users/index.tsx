@@ -1,14 +1,11 @@
 import { Box, Flex, Spinner } from '@chakra-ui/react'
-import axios from 'axios'
-import { GetServerSideProps } from 'next'
 import { useState } from 'react'
 import { Header } from '../../components/Header'
 import { Pagination } from '../../components/Pagination'
 import { Sidebar } from '../../components/Sidebar'
 import { UsersTable } from '../../components/UsersTable'
 import { useMediaQueryContext } from '../../contexts/MediaQueryContext'
-import { api } from '../../services/api'
-import { getUsers, useUsers } from '../../services/hooks/useUsers'
+import { useUsers } from '../../services/hooks/useUsers'
 
 interface ReturnUseMediaQueryContext {
   isMobile: boolean
@@ -86,6 +83,7 @@ export default function UserList() {
             isFetching={isFetching}
             error={error}
             data={data}
+            currentPage={page}
           />
           {data && data.totalCount && (
             <Pagination

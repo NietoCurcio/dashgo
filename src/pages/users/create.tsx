@@ -102,17 +102,17 @@ export default function UserCreate() {
   return (
     <Box>
       <Header isMobile={isMobile} />
-      <Flex
-        w="100%"
-        my="6"
-        maxWidth={1480}
-        mx="auto"
-        px="6"
-        onSubmit={handleCreateUser}
-      >
+      <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
         <Sidebar isMobile={isMobile} />
 
-        <Box as="form" flex="1" borderRadius={8} bg="gray.800" p={['6', '8']}>
+        <Box
+          as="form"
+          onSubmit={handleCreateUser}
+          flex="1"
+          borderRadius={8}
+          bg="gray.800"
+          p={['6', '8']}
+        >
           <Heading size="lg" fontWeight="normal">
             Criar usuário
           </Heading>

@@ -41,7 +41,7 @@ export function makeServer() {
     },
 
     seeds(server) {
-      server.createList('user', 100)
+      server.createList('user', 20)
     },
 
     routes() {
@@ -65,6 +65,24 @@ export function makeServer() {
       })
       this.get('/users/:id')
       this.post('/users')
+      this.put('/users/:id', function (schema, request) {
+        const { user } = JSON.parse(request.requestBody)
+
+        const userObject = schema.findBy('user', { email: user.email })
+        // or userObject = schema.find('user', request.params.id)
+
+        userObject.name = user.name
+        userObject.email = user.email
+        userObject.save()
+
+        const updated_user = {
+          name: userObject.attrs.name,
+          email: userObject.attrs.name,
+          id: userObject.id,
+        }
+
+        return new Response(200, {}, { updated_user })
+      })
       this.namespace = ''
       //   reset to '', in order to not generate conflict with the /api by Next.js
       this.passthrough()

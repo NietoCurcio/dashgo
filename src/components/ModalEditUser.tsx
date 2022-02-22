@@ -1,6 +1,5 @@
 import {
   Button,
-  Input as i,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -9,21 +8,34 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
-  Text,
   VStack,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
+import { useMutation } from 'react-query'
+import { api } from '../services/api'
 import { useUser } from '../services/hooks/useUser'
+import { queryClient } from '../services/queryClient'
 import { Input } from './Form/Input'
 
 interface ModalEditUserProps {
   userId: string
   isOpen: boolean
+  currentPage: number
   onClose: () => void
 }
 
-// export function ModalEditUser({ isOpen, user, onClose }: ModalEditUserProps) {
-export function ModalEditUser({ isOpen, onClose, userId }: ModalEditUserProps) {
+interface UserData {
+  name: string
+  email: string
+  createdAt: string
+}
+
+export function ModalEditUser({
+  isOpen,
+  onClose,
+  userId,
+  currentPage,
+}: ModalEditUserProps) {
   const { data, isLoading, isFetching } = useUser(userId)
 
   const [state, setState] = useState({
@@ -31,6 +43,24 @@ export function ModalEditUser({ isOpen, onClose, userId }: ModalEditUserProps) {
     email: '',
     createdAt: '',
   })
+
+  const editUser = useMutation(
+    async (data: UserData) => {
+      const { createdAt, ...updated } = data
+      const response = await api.put(`/users/${userId}`, {
+        user: updated,
+      })
+      return response.data.user
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['user', userId]) // invalidate ['users', userId]
+        // onSuccess we want to reset the user cache, because the data has been modified
+        queryClient.invalidateQueries(['users', currentPage])
+        // onSuccess we also want to reset the users cache
+      },
+    }
+  )
 
   useEffect(() => {
     if (data)
@@ -46,10 +76,21 @@ export function ModalEditUser({ isOpen, onClose, userId }: ModalEditUserProps) {
     setState({ ...state, [target.name]: target.value })
   }
 
+  const handleEditUser = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    await editUser.mutateAsync(state)
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay zIndex={10} />
-      <ModalContent bgColor="#333" color="#f4f4f4" m={[4, 4, 0]}>
+      <ModalContent
+        bgColor="#333"
+        color="#f4f4f4"
+        m={[4, 4, 0]}
+        as="form"
+        onSubmit={handleEditUser}
+      >
         <ModalHeader>
           Editar usuário{' '}
           {!isLoading && isFetching && (
@@ -85,10 +126,11 @@ export function ModalEditUser({ isOpen, onClose, userId }: ModalEditUserProps) {
           <Button colorScheme="pink" variant="outline" mr={3} onClick={onClose}>
             Cancelar
           </Button>
-          <Button colorScheme="purple">Editar</Button>
+          <Button colorScheme="purple" type="submit">
+            Editar
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
-    // update from mutation responses, final aula de mutations
   )
 }

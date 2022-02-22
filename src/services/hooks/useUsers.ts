@@ -23,12 +23,12 @@ export async function getUsers(page: number): Promise<GetUsersResponse> {
 
     const totalCount = Number(headers['x-total-count'])
 
-    const users = data.users.map((user: User) => {
+    const users = data.users.map((user) => {
       return {
         id: user.id,
         name: user.name,
         email: user.email,
-        createdAt: new Date(user.createdAt).toLocaleDateString('pt-BR', {
+        createdAt: new Date(user.created_at).toLocaleDateString('pt-BR', {
           day: '2-digit',
           month: 'long',
           year: 'numeric',
@@ -46,7 +46,7 @@ export async function getUsers(page: number): Promise<GetUsersResponse> {
 export function useUsers(page: number) {
   // since the list of users are in cache
   // we have to tell to react-query how a list of users (a page of users)
-  // differs from each other
+  // differs from each other with ['users', page]
   return useQuery(['users', page], () => getUsers(page), {
     staleTime: 1000 * 60 * 10, // 10 minutes
     // ...options,

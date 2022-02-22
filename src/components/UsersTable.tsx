@@ -38,6 +38,7 @@ interface UsersTableProps {
   isFetching: boolean
   error: unknown
   data?: GetUsersResponse
+  currentPage: number
 }
 
 export function UsersTable({
@@ -46,6 +47,7 @@ export function UsersTable({
   isFetching,
   error,
   data,
+  currentPage,
 }: UsersTableProps) {
   const [user, setUser] = useState(null)
 
@@ -57,18 +59,21 @@ export function UsersTable({
 
         const user = {
           ...data.user,
-          createdAt: new Date(data.user.createdAt).toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: 'long',
-            year: '2-digit',
-          }),
+          createdAt: new Date(data.user.created_at).toLocaleDateString(
+            'pt-BR',
+            {
+              day: '2-digit',
+              month: 'long',
+              year: '2-digit',
+            }
+          ),
         }
 
         return user
       },
       { staleTime: 1000 * 60 * 10, cacheTime: 1000 * 60 * 5 }
       // cacheTime has the default of 5min
-      // after 5min of an instance being inactive the cached instance will be deleted
+      // after 5min of an instance being inactive this cached instance will be deleted
     )
   }
 
@@ -151,7 +156,12 @@ export function UsersTable({
         </Table>
       )}
       {!!user && (
-        <ModalEditUser userId={user} onClose={onClose} isOpen={isOpen} />
+        <ModalEditUser
+          currentPage={currentPage}
+          userId={user}
+          onClose={onClose}
+          isOpen={isOpen}
+        />
       )}
     </>
   )
