@@ -1,5 +1,7 @@
 import { Box, Flex, Spinner } from '@chakra-ui/react'
+import { useState } from 'react'
 import { Header } from '../../components/Header'
+import { Pagination } from '../../components/Pagination'
 import { Sidebar } from '../../components/Sidebar'
 import { UsersTable } from '../../components/UsersTable'
 import { useMediaQueryContext } from '../../contexts/MediaQueryContext'
@@ -32,7 +34,9 @@ export default function UserList() {
   it's possible to visualize the state of react-query and its caches 
   through the use of ReactQueryDevtools 
   */
-  const { data, isLoading, error, isFetching } = useUsers()
+  const [page, setPage] = useState(1)
+
+  const { data, isLoading, error, isFetching } = useUsers(page)
 
   const mediaQuery = useMediaQueryContext() as ReturnUseMediaQueryContext
 
@@ -49,13 +53,28 @@ export default function UserList() {
       <Flex my="6" w="100%" maxWidth={1480} mx="auto" px={['4', '4', '6']}>
         <Sidebar isMobile={mediaQuery.isMobile} />
 
-        <UsersTable
-          isMobile={mediaQuery.isMobile}
-          isLoading={isLoading}
-          isFetching={isFetching}
-          error={error}
-          data={data}
-        />
+        <Box
+          flex="1"
+          borderRadius={8}
+          bg="gray.800"
+          p={['6', '8']}
+          mx={['6', '8']}
+          overflow="hidden"
+        >
+          <UsersTable
+            isMobile={mediaQuery.isMobile}
+            isLoading={isLoading}
+            isFetching={isFetching}
+            error={error}
+            data={data}
+          />
+
+          <Pagination
+            totalCountOfRegisters={100}
+            currentPage={page}
+            onPageChange={setPage}
+          />
+        </Box>
       </Flex>
     </Box>
   )

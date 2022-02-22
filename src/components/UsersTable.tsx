@@ -13,18 +13,31 @@ import {
   Th,
   Thead,
   Tr,
+  Link as ChakraLink,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
 } from '@chakra-ui/react'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { RiAddLine } from 'react-icons/ri'
-import { User } from '../services/hooks/useUsers'
-import { Pagination } from './Pagination'
+import { api } from '../services/api'
+import { useUser } from '../services/hooks/useUser'
+import { GetUsersResponse } from '../services/hooks/useUsers'
+import { queryClient } from '../services/queryClient'
+import { ModalEditUser } from './ModalEditUser'
 
 interface UsersTableProps {
   isMobile: boolean
   isLoading: boolean
   isFetching: boolean
   error: unknown
-  data?: User[]
+  data?: GetUsersResponse
 }
 
 export function UsersTable({
@@ -34,15 +47,34 @@ export function UsersTable({
   error,
   data,
 }: UsersTableProps) {
+  const [user, setUser] = useState(null)
+
+  async function handlePrefetchUser(userId: string) {
+    await queryClient.prefetchQuery(['user', userId], async () => {
+      const { data } = await api.get(`/users/${userId}`)
+
+      const user = {
+        ...data.user,
+        createdAt: new Date(data.user.createdAt).toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: 'long',
+          year: '2-digit',
+        }),
+      }
+
+      return user
+    })
+  }
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const handleEditUser = (userId: string) => {
+    setUser(userId)
+    onOpen()
+  }
+
   return (
-    <Box
-      flex="1"
-      borderRadius={8}
-      bg="gray.800"
-      p={['6', '8']}
-      mx={['6', '8']}
-      overflow="hidden"
-    >
+    <>
       <Flex mb="8" justify="space-between" align="center">
         <Heading fontSize={['md', 'lg']} fontWeight="normal">
           Usuários{' '}
@@ -73,46 +105,48 @@ export function UsersTable({
           <Text>Falha ao obter dados dos usuários</Text>
         </Flex>
       ) : (
-        <>
-          <Table colorScheme="whiteAlpha" overflowX="scroll">
-            <Thead>
-              <Tr>
-                <Th px={['4', '4', '6']} color="gray.300" width="8">
+        <Table colorScheme="whiteAlpha" overflowX="scroll">
+          <Thead>
+            <Tr>
+              <Th px={['4', '4', '6']} color="gray.300" width="8">
+                <Checkbox colorScheme="pink" />
+              </Th>
+              <Th>Usuário</Th>
+              {!isMobile && <Th>Data de cadastro</Th>}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {data.users.map((user) => (
+              <Tr key={user.id}>
+                <Td px={['4', '4', '6']}>
                   <Checkbox colorScheme="pink" />
-                </Th>
-                <Th>Usuário</Th>
-                {!isMobile && <Th>Data de cadastro</Th>}
-              </Tr>
-            </Thead>
-            <Tbody>
-              {data?.map((user: User) => {
-                return (
-                  <Tr key={user.id}>
-                    <Td px={['4', '4', '6']}>
-                      <Checkbox colorScheme="pink" />
-                    </Td>
-                    <Td>
-                      <Box>
-                        <Text fontWeight="bold">{user.name}</Text>
-                        <Text fontSize="sm" color="gray.300">
-                          {user.email}
-                        </Text>
-                      </Box>
-                    </Td>
-                    {!isMobile && <Td>{user.createdAt}</Td>}
-                  </Tr>
-                )
-              })}
-            </Tbody>
-          </Table>
+                </Td>
+                <Td>
+                  <Box>
+                    <Text fontWeight="bold">
+                      <ChakraLink
+                        color="purple.400"
+                        onMouseEnter={() => handlePrefetchUser(user.id)}
+                        onClick={() => handleEditUser(user.id)}
+                      >
+                        {user.name}
+                      </ChakraLink>
+                    </Text>
 
-          <Pagination
-            totalCountOfRegisters={100}
-            currentPage={4}
-            onPageChange={() => {}}
-          />
-        </>
+                    <Text fontSize="sm" color="gray.300">
+                      {user.email}
+                    </Text>
+                  </Box>
+                </Td>
+                {!isMobile && <Td>{user.createdAt}</Td>}
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
       )}
-    </Box>
+      {!!user && (
+        <ModalEditUser userId={user} onClose={onClose} isOpen={isOpen} />
+      )}
+    </>
   )
 }

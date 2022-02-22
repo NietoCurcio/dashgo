@@ -35,7 +35,7 @@ export function makeServer() {
 
     routes() {
       this.namespace = 'api'
-      this.timing = 750
+      this.timing = 1750
       // 750ms setTimeout for an HTTP request
 
       this.get('/users', function (schema, request) {
@@ -52,6 +52,7 @@ export function makeServer() {
 
         return new Response(200, { 'x-total-count': String(total) }, { users })
       })
+      this.get('/users/:id')
       this.post('/users')
       this.namespace = ''
       //   reset to '', in order to not generate conflict with the /api by Next.js

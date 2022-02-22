@@ -1,4 +1,16 @@
-import { Button, Flex, Stack } from '@chakra-ui/react'
+import {
+  Button,
+  Flex,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Stack,
+  useDisclosure,
+} from '@chakra-ui/react'
 import type { NextPage } from 'next'
 import { Input } from '../components/Form/Input'
 import { SubmitHandler, useForm } from 'react-hook-form'

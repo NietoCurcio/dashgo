@@ -53,7 +53,7 @@ export function Pagination({
       <Stack direction="row" spacing="2">
         {currentPage > 1 + siblingsCount && (
           <>
-            <PaginationButton number={1} />{' '}
+            <PaginationButton onPageChange={onPageChange} number={1} />{' '}
             {currentPage > 2 + siblingsCount && (
               <Text textAlign="center" width="8" color="gray.300">
                 ...
@@ -64,14 +64,30 @@ export function Pagination({
 
         {previousPage.length > 0 &&
           previousPage.map((page) => {
-            return <PaginationButton number={page} key={page} />
+            return (
+              <PaginationButton
+                onPageChange={onPageChange}
+                number={page}
+                key={page}
+              />
+            )
           })}
 
-        <PaginationButton number={currentPage} isCurrent />
+        <PaginationButton
+          onPageChange={onPageChange}
+          number={currentPage}
+          isCurrent
+        />
 
         {nextPages.length > 0 &&
           nextPages.map((page) => {
-            return <PaginationButton number={page} key={page} />
+            return (
+              <PaginationButton
+                onPageChange={onPageChange}
+                number={page}
+                key={page}
+              />
+            )
           })}
 
         {currentPage + siblingsCount < lastPage && (
@@ -81,7 +97,7 @@ export function Pagination({
                 ...
               </Text>
             )}{' '}
-            <PaginationButton number={lastPage} />
+            <PaginationButton onPageChange={onPageChange} number={lastPage} />
           </>
         )}
       </Stack>

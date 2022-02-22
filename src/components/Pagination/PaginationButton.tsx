@@ -1,13 +1,17 @@
 import { Button } from '@chakra-ui/react'
+import { api } from '../../services/api'
+import { queryClient } from '../../services/queryClient'
 
 interface PaginationButtonProps {
   number: number
   isCurrent?: boolean
+  onPageChange: (page: number) => void
 }
 
 export function PaginationButton({
   isCurrent = false,
   number,
+  onPageChange,
 }: PaginationButtonProps) {
   if (isCurrent) {
     return (
@@ -27,6 +31,21 @@ export function PaginationButton({
     )
   }
 
+  async function handlePrefetchPage(number: number) {
+    await queryClient.prefetchQuery(
+      ['users', number],
+      async () => {
+        const { data, headers } = await api.get('/users', {
+          params: {
+            page: number,
+          },
+        })
+        return data
+      },
+      { staleTime: 1000 * 60 * 10 } // 10 minutes
+    )
+  }
+
   return (
     <Button
       size="sm"
@@ -34,6 +53,8 @@ export function PaginationButton({
       width="4"
       bg="gray.700"
       _hover={{ bg: 'gray.500' }}
+      onClick={() => onPageChange(number)}
+      onMouseEnter={() => handlePrefetchPage(number)}
     >
       {number}
     </Button>
