@@ -1,34 +1,29 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Dashgo
 
-## Getting Started
+> Projeto estudado durante o Ignite da Rocketseat sobre Data fetching e Cache local
 
-First, run the development server:
+<img src=".github/dashgo.png" width="750px">
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## React-Query
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+React Query é utilizado para buscar dados, sua diferença entre usar o axios ou o fetch, da própria API do Javascript, é que além de possuir hooks específicos para ser usado no React, ele é capaz de armazenar dados em cache, de forma que não seja necessário fazer as mesmas requisições HTTP em um curto intervalo de tempo. No GIF abaixo, note que a primeira requisição de usuários há um estado de carregamento, após buscar os usuários eles são armazenados em cache e o estado de carregamento não ocorre novamente:
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+<img src=".github/react-query-caching.gif" width="600px">
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+React Query usa a estratégia "stale while revalidate" (SWR), ou seja, caso o cache não seja mais válido, a biblioteca irá apresentar os dados em cache antigos na interface e por baixo dos panos irá revalidar esses dados fazendo uma nova requisição, para que os dados velhos (stale data) que estão em cache sejam atualizados, e os dados revalidados sejam exibidos.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+A biblioteca traz uma série de funcionalidades como "revalidade on focus", que ocorre quando usuário troca de janela e ao voltar para aplicação os dados são revalidados; "prefetching", no qual realiza a busca de dados e armazena em cache, antes mesmo de renderizar os componentes que usam esses dados; "mutations", usado quando são efetuadas operações que geram side-effects no server, ou seja, ao atualizar, deletar ou criar algum dado. É possível customizar diversos parâmetros, como por exemplo indicar por quanto tempo um cache local deve ser considerado válido.
 
-## Learn More
+### Prefetching
 
-To learn more about Next.js, take a look at the following resources:
+Com o React Query é possível realizar o prefetch de dados a partir de um evento disparado, nesse caso é feito o prefetch quando o usuário passa o mouse em cima da próxima página de usuários.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+<img src=".github/react-query-prefetch-users.gif" width="600px">
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Adicionei a funcionalidade de editar um usuário, ao passar o mouse em cima do usuário a ser editado é realizado o prefetch dos dados do usuário prestes a ser editado, dessa forma, uma vez que o usuário clica para editar, os dados já foram buscados e são renderizados pelo componente:
 
-## Deploy on Vercel
+<img src=".github/react-query-prefetch-user-to-edit.gif" width="600px">
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## MirageJs - mock API
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Essa aplicação faz uso do MirageJs para simultar uma REST API.
